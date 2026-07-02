@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Wind Down</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- DIM OVERLAY -->
+  <div id="dimOverlay"></div>
+
+  <!-- GOODNIGHT SCREEN -->
+  <div id="goodnightScreen" aria-hidden="true">
+    <div class="gn-content">
+      <div class="gn-stars" id="gnStars"></div>
+      <p class="gn-title">Good night.</p>
+      <span class="gn-sub">Sleep well</span>
+      <blockquote class="gn-quote" id="gnQuote"></blockquote>
+      <p class="gn-author" id="gnAuthor"></p>
+      <button class="gn-btn" onclick="resetApp()">Wake up</button>
+    </div>
+  </div>
+
+  <!-- MAIN APP -->
+  <div id="app">
+
+    <!-- HEADER -->
+    <header class="header">
+      <span class="logo">Wind Down</span>
+      <span class="logo-sub">your sleep ritual</span>
+    </header>
+
+    <!-- CLOCK -->
+    <section class="clock-section">
+      <div id="clock">
+        <span id="clockTime">--:--</span><span class="ampm" id="clockAmpm"></span>
+      </div>
+      <div id="dateLine"></div>
+    </section>
+
+    <!-- STATUS PILL -->
+    <div id="statusWrap">
+      <div id="statusPill"></div>
+    </div>
+
+    <!-- SET TIME CARD -->
+    <div class="card" id="setCard">
+      <div class="card-label">Sleep by</div>
+
+      <div class="time-row">
+        <div class="time-col">
+          <button class="arr-btn" onclick="adjustTime('h',1)" aria-label="Hour up">▲</button>
+          <div class="time-val" id="dispH">11</div>
+          <button class="arr-btn" onclick="adjustTime('h',-1)" aria-label="Hour down">▼</button>
+        </div>
+        <div class="time-sep">:</div>
+        <div class="time-col">
+          <button class="arr-btn" onclick="adjustTime('m',1)" aria-label="Minute up">▲</button>
+          <div class="time-val" id="dispM">00</div>
+          <button class="arr-btn" onclick="adjustTime('m',-1)" aria-label="Minute down">▼</button>
+        </div>
+        <div class="ampm-toggle">
+          <button class="ampm-btn" id="btnAM" onclick="setAmpm('AM')">AM</button>
+          <button class="ampm-btn active" id="btnPM" onclick="setAmpm('PM')">PM</button>
+        </div>
+      </div>
+
+      <div class="toggle-row">
+        <div>
+          <div class="toggle-label">Wind down</div>
+          <div class="toggle-sub" id="toggleSub">Set a time to begin</div>
+        </div>
+        <label class="switch" aria-label="Toggle wind down">
+          <input type="checkbox" id="mainToggle" onchange="onToggle()" />
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <!-- TIMELINE CARD -->
+    <div class="card" id="timelineCard">
+      <div class="card-label">Tonight's plan</div>
+      <div class="timeline">
+
+        <div class="tl-item" id="tl-30">
+          <div class="tl-dot">🌙</div>
+          <div class="tl-text">
+            <div class="tl-title">Gentle nudge</div>
+            <div class="tl-desc">15 minutes before — a soft reminder to start winding down</div>
+            <div class="tl-time" id="tl-30-time">— : —</div>
+          </div>
+        </div>
+
+        <div class="tl-item" id="tl-20">
+          <div class="tl-dot">🌫</div>
+          <div class="tl-text">
+            <div class="tl-title">Screen dims</div>
+            <div class="tl-desc">10 minutes before — gradual overlay darkens the screen</div>
+            <div class="tl-time" id="tl-20-time">— : —</div>
+          </div>
+        </div>
+
+        <div class="tl-item" id="tl-10">
+          <div class="tl-dot">🎵</div>
+          <div class="tl-text">
+            <div class="tl-title">Ambient sound</div>
+            <div class="tl-desc">5 minutes before — calming audio begins softly</div>
+            <div class="tl-time" id="tl-10-time">— : —</div>
+          </div>
+        </div>
+
+        <div class="tl-item" id="tl-0">
+          <div class="tl-dot">✦</div>
+          <div class="tl-text">
+            <div class="tl-title">Good night</div>
+            <div class="tl-desc">Screen goes dark. Rest well.</div>
+            <div class="tl-time" id="tl-0-time">— : —</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- SOUND PICKER -->
+      <div class="sound-row">
+        <button class="sound-btn active" id="snd-rain"   onclick="selectSound('rain')">🌧 Rain</button>
+        <button class="sound-btn"        id="snd-white"  onclick="selectSound('white')">〰 White Noise</button>
+        <button class="sound-btn"        id="snd-forest" onclick="selectSound('forest')">🌿 Forest</button>
+      </div>
+
+      <!-- VOLUME CONTROL -->
+      <div class="volume-row">
+        <span class="vol-icon">🔈</span>
+        <input type="range" id="volumeSlider" min="0" max="100" value="40"
+               oninput="onVolumeChange(this.value)" aria-label="Volume" />
+        <span class="vol-icon">🔊</span>
+      </div>
+    </div>
+
+    <!-- SLEEP STREAK CARD -->
+    <div class="card" id="streakCard">
+      <div class="card-label">Sleep streak</div>
+      <div class="streak-row">
+        <div class="streak-num" id="streakNum">0</div>
+        <div class="streak-info">
+          <div class="streak-label">nights in a row</div>
+          <div class="streak-best">Best: <span id="streakBest">0</span></div>
+        </div>
+        <div class="streak-dots" id="streakDots"></div>
+      </div>
+    </div>
+
+  </div><!-- /app -->
+
+  <script src="js/quotes.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/streak.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>
